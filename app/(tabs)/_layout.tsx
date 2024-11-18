@@ -30,14 +30,12 @@ const TabsLayout = () => {
                             color={color} />
                 }}
             />
-            <Tabs.Screen
+            {/* <Tabs.Screen
                 name="meditate/[id]"
                 options={{
                     title: 'Meditate',
-                    tabBarIcon: ({ color }) =>
-                        <FontAwesome5 name="brain" size={24} color="dimgray" />
                 }}
-            />
+            /> */}
         </Tabs>
     )
 }

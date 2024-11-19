@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Tabs } from 'expo-router'
 import Colors from '@/constants/Colors'
-import { MaterialCommunityIcons, Feather, FontAwesome5 } from '@expo/vector-icons/';
+import { MaterialCommunityIcons, Feather, AntDesign } from '@expo/vector-icons/';
 
 const TabsLayout = () => {
     return (
@@ -30,12 +30,17 @@ const TabsLayout = () => {
                             color={color} />
                 }}
             />
-            {/* <Tabs.Screen
-                name="meditate/[id]"
+            <Tabs.Screen
+                name='profile'
                 options={{
-                    title: 'Meditate',
+                    title: 'Profile',
+                    tabBarIcon: ({ color }) =>
+                        <AntDesign
+                            name="user"
+                            size={24}
+                            color={color} />
                 }}
-            /> */}
+            />
         </Tabs>
     )
 }

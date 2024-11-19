@@ -1,7 +1,7 @@
 import { SignUpImage, silentBuddha } from '@/constants/otherImages';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image, TextInput, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const LandingPage = () => {
@@ -61,7 +61,9 @@ const LandingPage = () => {
                         <View className='flex-row items-center justify-center'>
                             <View className='flex-row mt-4 items-center justify-center'>
                                 <Text className='text-center text-gray-800'>ALREADY HAVE AN ACCOUNT? </Text>
-                                <Text className='text-center text-blue-800'> LOG IN</Text>
+                                <Pressable onPress={() => { router.push('/login') }}>
+                                    <Text className='text-center text-blue-800'> LOG IN</Text>
+                                </Pressable>
                             </View>
                         </View>
                     </View>

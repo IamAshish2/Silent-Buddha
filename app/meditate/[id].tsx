@@ -13,13 +13,11 @@ import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 
 const Meditate = () => {
     const { id } = useLocalSearchParams();
-    const [audio, setAudio] = useState();
+    const [audio, setAudio] = useState<Record<string, string>>();
     const [isPlaying, setIsPlaying] = useState(false);
 
     function initializeAudio() {
         const audioFileName = MEDITATION_DATA[Number(id) - 1].audio;
-        console.log(audioFileName);
-
         setAudio(AUDIO_FILES[audioFileName]);
     }
 
@@ -43,7 +41,6 @@ const Meditate = () => {
 
     const player = useAudioPlayer(audio);
     const status = useAudioPlayerStatus(player);
-
 
     function togglePlay() {
         setIsPlaying(!isPlaying);

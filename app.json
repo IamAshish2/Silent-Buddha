@@ -20,7 +20,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.thewizardish.meditation"
     },
     "web": {
       "bundler": "metro",
@@ -38,10 +43,18 @@
           "backgroundColor": "#ffffff"
         }
       ],
-     "expo-audio"
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e45c6326-fbcb-41bd-bd53-46e7d0c3e24e"
+      }
     }
   }
 }

@@ -2,21 +2,21 @@ import React, { Component } from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 
 interface CustomButtonProps {
-    onPress: () => void,
+    onPress?: () => void,
     title: string,
     textStyles?: string,
-    contatinerStyles?: string
+    contatinerStyles?: string,
 }
 
-const CustomButton = ({onPress,title,textStyles,contatinerStyles}: CustomButtonProps) => {
+const CustomButton = ({ onPress, title, textStyles, contatinerStyles }: CustomButtonProps) => {
 
     return (
-        <TouchableOpacity 
+        <TouchableOpacity
             activeOpacity={0.7}
-            className={`bg-white rounded-xl min-h-[62px] justify-center items-center ${contatinerStyles}`}
+            className={`${contatinerStyles} bg-white rounded-xl min-h-[62px] justify-center items-center `}
             onPress={onPress}>
-                
-            <Text> {title} </Text>
+
+            <Text className={`${textStyles}`}> {title} </Text>
         </TouchableOpacity>
     )
 }

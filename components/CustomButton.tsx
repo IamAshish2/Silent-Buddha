@@ -13,7 +13,7 @@ const CustomButton = ({ onPress, title, textStyles, contatinerStyles }: CustomBu
     return (
         <TouchableOpacity
             activeOpacity={0.7}
-            className={`${contatinerStyles} bg-white rounded-xl min-h-[62px] justify-center items-center `}
+            className={`${contatinerStyles} bg-white rounded-full min-h-[62px] justify-center items-center `}
             onPress={onPress}>
 
             <Text className={`${textStyles}`}> {title} </Text>

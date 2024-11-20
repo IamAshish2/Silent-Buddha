@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Pressable, TextInput } from 'react-native'
+import { View, Text, StyleSheet, Button, Pressable, TextInput, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -7,6 +7,8 @@ import CustomSignUpSection from '@/components/CustomSignUpSection';
 import { useRouter } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import CheckBox from 'react-native-check-box';
+import { signUpSchema } from '@/validation/ValidationSchema';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 const signUp = () => {
   const router = useRouter();
@@ -17,6 +19,7 @@ const signUp = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
+    resolver: yupResolver(signUpSchema),
     defaultValues: {
       username: "",
       email: "",
@@ -31,7 +34,7 @@ const signUp = () => {
 
   return (
     <SafeAreaView>
-      <View className='flex p-4 m-2'>
+      <ScrollView className='flex p-4 m-2'>
         {/* back button */}
         <Pressable onPress={() => { router.back() }}>
           <View className='justify-center items-center h-14 w-14 border rounded-full border-zinc-400'>
@@ -125,7 +128,7 @@ const signUp = () => {
             textStyles='text-center text-white font-bold'
             contatinerStyles='bg-[#8E97FD] mt-5' />
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   )
 
@@ -159,6 +162,11 @@ const styles = StyleSheet.create({
   },
   checkBox: {
     borderColor: '#A1A4B2'
+  },
+  errorText: {
+    color: '#FF0000',
+    textAlign: 'center',
+
   }
 });
 

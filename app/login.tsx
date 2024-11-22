@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput, Button, StyleSheet } from 'react-native'
+import { View, Text, Pressable, TextInput, Button, StyleSheet, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +29,7 @@ const Login = () => {
 
     return (
         <SafeAreaView >
-            <View className='flex p-4 m-2'>
+            <ScrollView className='flex p-4 m-2'>
                 {/* back button */}
                 <Pressable onPress={() => { router.back() }}>
                     <View className='justify-center items-center h-14 w-14 border rounded-full border-zinc-400'>
@@ -99,7 +99,7 @@ const Login = () => {
                     >ALREADY HAVE AN ACCOUNT?</Text>
                     <Text style={styles.blueText}> SIGN UP</Text>
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }

@@ -9,16 +9,38 @@ import AppGradient from '@/components/AppGradient'
 import { AUDIO_FILES } from '@/constants/MeditationData'
 import { MEDITATION_DATA, MeditationType } from '@/constants/MeditationData'
 import MEDITATION_IMAGES from '@/constants/meditation-images'
-import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
-
+import { Audio, AVPlaybackStatusError, AVPlaybackStatusSuccess } from 'expo-av'
 const Meditate = () => {
     const { id } = useLocalSearchParams();
-    const [audio, setAudio] = useState<Record<string, string>>();
+    const [sound, setSound] = useState<Audio.Sound>();
+    const [status, setStatus] = useState<AVPlaybackStatusError | AVPlaybackStatusSuccess>();
     const [isPlaying, setIsPlaying] = useState(false);
 
-    function initializeAudio() {
+
+    async function initializeAudio() {
         const audioFileName = MEDITATION_DATA[Number(id) - 1].audio;
-        setAudio(AUDIO_FILES[audioFileName]);
+        const { sound, status } = await Audio.Sound.createAsync(AUDIO_FILES[audioFileName]);
+        setSound(sound);
+        setStatus(status);
+    }
+
+    useEffect(() => {
+        async function initialize() {
+            await initializeAudio();
+        }
+
+        initialize();
+        return () => {
+            sound?.unloadAsync();
+        }
+    }, [])
+
+    async function toggleSound() {
+        if (isPlaying) {
+            await sound?.pauseAsync();
+        } else {
+            await sound?.playAsync();
+        }
     }
 
     function formatTime(ms: number): string {
@@ -31,32 +53,21 @@ const Meditate = () => {
         return `${minutes}:${formattedSeconds}`;
     }
 
-    useEffect(() => {
-        initializeAudio();
-
-        return () => {
-            setAudio(undefined);
-        }
-    }, []);
-
-    const player = useAudioPlayer(audio);
-    const status = useAudioPlayerStatus(player);
-
-    function togglePlay() {
-        setIsPlaying(!isPlaying);
-        if (isPlaying) {
-            player.pause();
-        } else {
-            player.play();
-        }
-    }
-
-
-    function goBack() {
+    async function goBack() {
         setIsPlaying(false);
-        player.pause();
+        await sound?.pauseAsync();
         router.push('../')
     }
+
+    // check if i have to unload the sound every time
+    useEffect(() => {
+        return sound
+            ? () => {
+                console.log('Unloading Sound');
+                sound.unloadAsync();
+            }
+            : undefined;
+    }, [sound]);
 
     return (
         <>
@@ -79,9 +90,13 @@ const Meditate = () => {
                         </View>
 
                         {/* play/pause icon and player */}
-                        <Pressable onPress={() => { togglePlay() }} className="bg-black mt-44 rounded-full w-32 h-32 items-center justify-center self-center">
+                        <Pressable onPress={() => {
+                            setIsPlaying(!isPlaying)
+                            toggleSound()
+                        }} className="bg-black mt-44 rounded-full w-32 h-32 items-center justify-center self-center">
                             <FontAwesome
-                                name={isPlaying && status.currentTime !== status.duration ? "pause" : "play"}
+                                // status.currentTime !== status.duration
+                                name={isPlaying ? "pause" : "play"}
                                 size={28}
                                 color="snow"
                             />
@@ -100,8 +115,8 @@ const Meditate = () => {
                                     <View className="flex justify-center items-center w-[32]rem">
                                         <Slider
                                             style={{ width: "100%", height: 44 }}
-                                            value={status.currentTime / status.duration}
-                                            onSlidingComplete={(value) => { player.seekTo(value * status.duration) }}
+                                            // value={ }
+                                            // onSlidingComplete={(value) => { player.seekTo(value * status.duration) }}
                                             minimumValue={0}
                                             maximumValue={1}
                                             minimumTrackTintColor="white"
@@ -112,8 +127,8 @@ const Meditate = () => {
 
                                     {/* Time */}
                                     <View className="flex items-center flex-row justify-between mt-2 p-2">
-                                        <Text className='text-white'>{formatTime(status.currentTime)}</Text>
-                                        <Text className='text-white'>{formatTime(status.duration)}</Text>
+                                        {/* <Text className='text-white'>{formatTime(status.currentTime)}</Text>
+                                        <Text className='text-white'>{formatTime(status.duration)}</Text> */}
                                     </View>
                                 </View>
                             </View>

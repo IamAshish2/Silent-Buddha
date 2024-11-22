@@ -29,7 +29,7 @@ const App = () => {
                         </View>
                         <View>
                             <CustomButton
-                                onPress={() => router.push(`/nature-meditate`)} title={'Get Started'} />
+                                onPress={() => router.push(`/nature-meditate`)} title={'Get Started'} contatinerStyles='bg-white' />
                         </View>
                         <StatusBar style='light' />
                     </SafeAreaView>

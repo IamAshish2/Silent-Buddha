@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "177859685656",
+    "project_id": "project-a6d9b",
+    "storage_bucket": "project-a6d9b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:177859685656:android:d9c6816b7efe3bc58a826d",
+        "android_client_info": {
+          "package_name": "com.thewizardish.meditation"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDABFbayWAqFaYjkHqI-WwgjPhdFlXOTss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

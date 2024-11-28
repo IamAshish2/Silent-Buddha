@@ -9,10 +9,9 @@ import { Controller, useForm } from 'react-hook-form';
 import CheckBox from 'react-native-check-box';
 import { signUpSchema } from '@/validation/ValidationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { auth } from '@/lib/Firebase/firebaseConfig';
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { auth, db } from '@/lib/Firebase/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-
+import { setDoc, doc } from '@firebase/firestore';
 
 const signUp = () => {
   const router = useRouter();
@@ -27,31 +26,24 @@ const signUp = () => {
     },
   })
 
-  function createNewUser(credentials: FirebaseAuthTypes.UserCredential) {
-
-  }
-
 
   const onSubmit = async ({ email, password, username }: user) => {
-    // console.log(email, password, username)
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(response);
+      await createUserWithEmailAndPassword(auth, email, password);
+      const user = auth.currentUser;
+      console.log(user);
 
-      const currentUser = auth.currentUser;
-      console.log(currentUser);
 
-      // const addUserToDb = createNewUser(response);
+      if (user) {
+        await setDoc(doc(db, 'users', user.uid), {
+          email: user.email,
+          username: username,
+        })
+      }
+      router.push('/login')
     }
     catch (error) {
-      // if (error.code === 'auth/email-already-in-use') {
-      //   console.log('That email address is already in use!');
-      // }
-
-      // if (error.code === 'auth/invalid-email') {
-      //   console.log('That email address is invalid!');
-      // }
-      console.error(error);
+      console.log(error);
     }
   }
 

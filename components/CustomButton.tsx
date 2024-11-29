@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native'
 
 interface CustomButtonProps {
     onPress?: () => void,
     title: string,
     textStyles?: string,
     contatinerStyles?: string,
+    isLoading?: boolean
 }
 
-const CustomButton = ({ onPress, title, textStyles, contatinerStyles }: CustomButtonProps) => {
+const CustomButton = ({ onPress, title, textStyles, contatinerStyles, isLoading }: CustomButtonProps) => {
 
     return (
         <TouchableOpacity
@@ -16,7 +17,9 @@ const CustomButton = ({ onPress, title, textStyles, contatinerStyles }: CustomBu
             className={`${contatinerStyles} rounded-full min-h-[62px] justify-center items-center `}
             onPress={onPress}>
 
-            <Text className={`${textStyles}`}> {title} </Text>
+            {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> 
+            : <Text className={`${textStyles}`}> {title} </Text>}
+
         </TouchableOpacity>
     )
 }

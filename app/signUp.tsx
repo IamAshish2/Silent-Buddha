@@ -7,7 +7,7 @@ import CustomSignUpSection from '@/components/CustomSignUpSection';
 import { useRouter } from 'expo-router';
 import { Controller, useForm } from 'react-hook-form';
 import CheckBox from 'react-native-check-box';
-import { signUpSchema } from '@/validation/ValidationSchema';
+import { signUpSchema } from '@/lib/validation/ValidationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { auth, db } from '@/lib/Firebase/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -15,20 +15,22 @@ import { setDoc, doc } from '@firebase/firestore';
 
 const signUp = () => {
   const router = useRouter();
-  const [checkBox, setCheckBox] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
   const { control, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(signUpSchema),
     defaultValues: {
       username: "",
       email: "",
-      password: ""
+      password: "",
+      checkbox: false
     },
   })
 
 
   const onSubmit = async ({ email, password, username }: user) => {
     try {
+      setIsSigningUp(true);
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
       console.log(user);
@@ -40,6 +42,7 @@ const signUp = () => {
           username: username,
         })
       }
+      setIsSigningUp(false);
       router.push('/login')
     }
     catch (error) {
@@ -83,6 +86,7 @@ const signUp = () => {
             )}
             name="username"
           />
+          {errors.username && <Text style={styles.errorText}>{errors.username.message}</Text>}
 
           <Controller
             control={control}
@@ -100,6 +104,7 @@ const signUp = () => {
             )}
             name="email"
           />
+          {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
 
           <Controller
             control={control}
@@ -117,15 +122,21 @@ const signUp = () => {
             )}
             name="password"
           />
+          {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
 
           <View className='flex-row items-center justify-center p-1 gap-5 mt-4'>
-            <CheckBox
-              style={styles.checkBox}
-              checkBoxColor='#A1A4B2'
-              checkedCheckBoxColor='#8E97FD'
-              onClick={() => { setCheckBox(!checkBox) }}
-              isChecked={checkBox}
-              value={checkBox}
+            <Controller
+              control={control}
+              name="checkbox"
+              render={({ field: { onChange, value } }) => (
+                <CheckBox
+                  style={styles.checkBox}
+                  checkBoxColor="#A1A4B2"
+                  checkedCheckBoxColor="#8E97FD"
+                  onClick={() => onChange(!value)} // Toggle the value
+                  isChecked={value}
+                />
+              )}
             />
             <View className='flex-row'>
               <Text
@@ -135,13 +146,16 @@ const signUp = () => {
               <Text style={styles.blueText}> Privacy Policy</Text>
             </View>
           </View>
+          {errors.checkbox && <Text style={styles.errorText}>{errors.checkbox.message}</Text>}
 
           {/* Get Started button */}
           <CustomButton
             title='GET STARTED'
             onPress={handleSubmit(onSubmit)}
             textStyles='text-center text-white font-bold'
-            contatinerStyles='bg-[#8E97FD] mt-5' />
+            contatinerStyles='bg-[#8E97FD] mt-5'
+            isLoading={isSigningUp ? true : false} />
+
         </View>
       </ScrollView>
     </SafeAreaView>

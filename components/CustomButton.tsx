@@ -7,6 +7,7 @@ interface CustomButtonProps {
     textStyles?: string,
     contatinerStyles?: string,
     isLoading?: boolean
+    disabled?: boolean
 }
 
 const CustomButton = ({ onPress, title, textStyles, contatinerStyles, isLoading }: CustomButtonProps) => {
@@ -15,10 +16,11 @@ const CustomButton = ({ onPress, title, textStyles, contatinerStyles, isLoading 
         <TouchableOpacity
             activeOpacity={0.7}
             className={`${contatinerStyles} rounded-full min-h-[62px] justify-center items-center `}
-            onPress={onPress}>
+            onPress={onPress}
+        >
 
-            {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> 
-            : <Text className={`${textStyles}`}> {title} </Text>}
+            {isLoading ? <ActivityIndicator size="small" color="#ffffff" />
+                : <Text className={`${textStyles}`}> {title} </Text>}
 
         </TouchableOpacity>
     )

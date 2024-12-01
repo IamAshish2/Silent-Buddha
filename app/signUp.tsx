@@ -19,6 +19,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 const signUp = () => {
   const router = useRouter();
   const [isSigningUp, setIsSigningUp] = useState(false);
+  // const [signUpError, setSignUpError] = useState("");
 
   // GoogleSignin.configure({
   //   webClientId: '177859685656-m4e97u6blcc84rg05jtk6i02hml9khdq.apps.googleusercontent.com',
@@ -33,30 +34,29 @@ const signUp = () => {
       password: "",
       checkbox: false
     },
+    mode: 'onTouched'
   })
-
 
   const onSubmit = async ({ email, password, username }: user) => {
     try {
       setIsSigningUp(true);
       await createUserWithEmailAndPassword(auth, email, password);
       const user = auth.currentUser;
-      console.log(user);
-
 
       if (user) {
         await setDoc(doc(db, 'users', user.uid), {
           email: user.email,
           username: username,
-        })
+        });
       }
+
       setIsSigningUp(false);
-      router.push('/login')
-    }
-    catch (error) {
+      router.push('/login');
+    } catch (error) {
+      setIsSigningUp(false);
       console.log(error);
     }
-  }
+  };
 
 
 
@@ -128,6 +128,7 @@ const signUp = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
+                secureTextEntry
               />
             )}
             name="password"
@@ -164,7 +165,7 @@ const signUp = () => {
             onPress={handleSubmit(onSubmit)}
             textStyles='text-center text-white font-bold'
             contatinerStyles='bg-[#8E97FD] mt-5'
-            isLoading={isSigningUp ? true : false} />
+            isLoading={isSigningUp} />
 
         </View>
       </ScrollView>

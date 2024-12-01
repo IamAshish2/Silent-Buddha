@@ -5,10 +5,7 @@ export const signUpSchema = yup.object().shape({
     .string()
     .required('Username is required')
     .min(3, 'Username must contain at least 3 characters'),
-  email: yup
-    .string()
-    .required('Email is required')
-    .email('Invalid email'),
+    email:yup.string().email("Enter a valid email").required("Email cannot be empty"),
   password: yup
     .string()
     .required('Password is required')
@@ -17,3 +14,12 @@ export const signUpSchema = yup.object().shape({
     .boolean()
     .oneOf([true], 'You must agree to all Terms and Conditions'),
 });
+
+
+export const loginSchema = yup.object().shape({
+  email:yup.string().email("Enter a valid email").required("Email cannot be empty"),
+  password: yup
+    .string()
+    .required('Password is required')
+    .min(8, 'Password must contain at least 8 characters'),
+})

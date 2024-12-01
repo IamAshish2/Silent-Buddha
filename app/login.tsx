@@ -7,24 +7,44 @@ import { useForm, Controller } from 'react-hook-form';
 import CheckBox from 'react-native-check-box';
 import CustomButton from '@/components/CustomButton';
 import { useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { loginSchema } from '@/lib/validation/ValidationSchema';
+import { auth } from '@/lib/Firebase/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
+type loginCredentials = {
+    email: string,
+    password: string
+}
 
 const Login = () => {
     const router = useRouter();
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const {
-        control,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({
+    const { control, handleSubmit, formState: { errors }, } = useForm({
+        resolver: yupResolver(loginSchema),
         defaultValues: {
-            username: "",
             email: "",
             password: ""
         },
     })
 
-    const onSubmit = (data: any) => {
-        console.log(data)
+    const onSubmit = async ({ email, password }: loginCredentials) => {
+        setIsLoggingIn(true);
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            if (user) {
+                router.push('/home');
+            }
+        } catch (error) {
+            setErrorMessage("Invalid email or password.");
+            console.error('Login error:', error);
+        } finally {
+            setIsLoggingIn(false);
+        }
+        { errorMessage && <Text style={styles.errorText}>{errorMessage}</Text> }
     }
 
     return (
@@ -63,6 +83,7 @@ const Login = () => {
                         )}
                         name="email"
                     />
+                    {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
 
                     <Controller
                         control={control}
@@ -76,17 +97,22 @@ const Login = () => {
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 value={value}
+                                secureTextEntry={true}
                             />
                         )}
                         name="password"
                     />
+                    {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
 
                     {/* Get Started button */}
                     <CustomButton
                         title='LOG IN'
                         onPress={handleSubmit(onSubmit)}
                         textStyles='text-center text-white font-bold'
-                        contatinerStyles='bg-[#8E97FD] mt-8' />
+                        contatinerStyles={`bg-[#8E97FD] mt-8 ${isLoggingIn ? 'opacity-50' : ''}`}
+                        //TODO the loading symbol is not updating properly, work on that
+                        isLoading={isLoggingIn}
+                    />
 
                     <Text className='text-center mt-5 font-semibold underline'>Forgot Password?</Text>
                 </View>
@@ -132,6 +158,11 @@ const styles = StyleSheet.create({
     },
     checkBox: {
         borderColor: '#A1A4B2'
+    },
+    errorText: {
+        color: '#FF0000',
+        textAlign: 'center',
+
     }
 });
 

@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Button, Pressable, TextInput, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CustomButton from '@/components/CustomButton';
@@ -12,10 +12,18 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { auth, db } from '@/lib/Firebase/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from '@firebase/firestore';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+
+
 
 const signUp = () => {
   const router = useRouter();
   const [isSigningUp, setIsSigningUp] = useState(false);
+
+  // GoogleSignin.configure({
+  //   webClientId: '177859685656-m4e97u6blcc84rg05jtk6i02hml9khdq.apps.googleusercontent.com',
+  // });
+
 
   const { control, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(signUpSchema),
@@ -49,6 +57,8 @@ const signUp = () => {
       console.log(error);
     }
   }
+
+
 
   return (
     <SafeAreaView>

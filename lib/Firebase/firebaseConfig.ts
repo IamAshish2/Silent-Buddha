@@ -2,7 +2,8 @@ import { initializeApp } from "firebase/app";
 import { initializeAuth } from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { getFirestore } from "firebase/firestore";
-import { getReactNativePersistence } from "firebase/auth";
+// import { getReactNativePersistence } from "firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 // Firebase configuration
 const firebaseConfig = {

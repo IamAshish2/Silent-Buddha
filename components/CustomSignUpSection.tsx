@@ -3,7 +3,9 @@ import { facebook, google } from '@/constants/otherImages'
 import { useRouter } from 'expo-router'
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
 import { useEffect } from 'react';
+import { onGoogleButtonPress } from '@/lib/api/firebaseApi';
 
 type CustomSignUpSectionProps = {
     headingText: string,
@@ -14,9 +16,20 @@ type CustomSignUpSectionProps = {
 const CustomSignUpSection = ({ headingText, BottomText }: CustomSignUpSectionProps) => {
     const router = useRouter();
 
-    async function onGoogleButtonPress() {
+    async function googleSignIn() {
+        try {
+            const user = await onGoogleButtonPress();
+            console.log(user);
 
+        } catch (error) {
+            console.log(error);
+
+        }
     }
+
+    GoogleSignin.configure({
+        webClientId: '',
+    })
 
     return (
         <View className='mt-5 flex-col items-center justify-between h-48'>
@@ -25,7 +38,7 @@ const CustomSignUpSection = ({ headingText, BottomText }: CustomSignUpSectionPro
 
             <View className='h-48 mt-8 gap-5'>
                 <Pressable
-
+                    onPress={() => { router.push('/profile') }}
                     className="h-16 w-[24rem] rounded-full justify-center"
                     style={{ backgroundColor: '#7583CA' }}
                 >
@@ -39,7 +52,7 @@ const CustomSignUpSection = ({ headingText, BottomText }: CustomSignUpSectionPro
                 </Pressable>
 
                 <Pressable
-                    onPress={onGoogleButtonPress}
+                    onPress={googleSignIn}
                     className='h-16 w-[24rem] justify-center rounded-full border border-zinc-400'>
                     <View className="flex flex-row items-center justify-center">
                         <Image

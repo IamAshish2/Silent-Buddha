@@ -1,18 +1,37 @@
+import React, { useEffect } from 'react'
+import { router, Slot, Stack } from 'expo-router'
+import AuthProvider, { useAuth } from '@/store/AuthContext';
 
-import 'expo-dev-client';
-import { Slot, Stack } from "expo-router";
-import "../global.css"
 
-export default function RootLayout() {
+export default function _layout() {
+
     return (
-        // specify Stack Screens for switching between tabs
+        <AuthProvider>
+            <RootLayout />
+        </AuthProvider>
+    )
+}
+
+const RootLayout = () => {
+
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        if (isAuthenticated === undefined) return;
+
+        if (isAuthenticated) {
+            router.replace('/app');
+        } else {
+            router.replace('/Landing');
+        }
+    }, [isAuthenticated]);
+
+    return (
         <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="home" options={{ headerShown: false }} />
+            <Stack.Screen name="app" options={{ headerShown: false }} />
             <Stack.Screen name="signUp" options={{ headerShown: false }} />
             <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="meditate/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="Landing" options={{ headerShown: false }} />
         </Stack>
-    );
+    )
 }

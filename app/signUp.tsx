@@ -13,18 +13,18 @@ import { auth, db } from '@/lib/Firebase/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from '@firebase/firestore';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useAuth } from '@/store/AuthContext';
 
-
+type signUpCredentials = {
+  username: string,
+  email: string,
+  password: string;
+}
 
 const signUp = () => {
+  const { register } = useAuth();
   const router = useRouter();
   const [isSigningUp, setIsSigningUp] = useState(false);
-  // const [signUpError, setSignUpError] = useState("");
-
-  // GoogleSignin.configure({
-  //   webClientId: '177859685656-m4e97u6blcc84rg05jtk6i02hml9khdq.apps.googleusercontent.com',
-  // });
-
 
   const { control, handleSubmit, formState: { errors }, } = useForm({
     resolver: yupResolver(signUpSchema),
@@ -37,10 +37,10 @@ const signUp = () => {
     mode: 'onTouched'
   })
 
-  const onSubmit = async ({ email, password, username }: user) => {
+  const onSubmit = async ({ email, password, username }: signUpCredentials) => {
+    setIsSigningUp(true);
     try {
-      setIsSigningUp(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+      await register(email, password);
       const user = auth.currentUser;
 
       if (user) {
@@ -49,12 +49,11 @@ const signUp = () => {
           username: username,
         });
       }
-
-      setIsSigningUp(false);
       router.push('/login');
     } catch (error) {
-      setIsSigningUp(false);
       console.log(error);
+    } finally {
+      setIsSigningUp(false);
     }
   };
 

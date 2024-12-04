@@ -4,13 +4,13 @@ import { AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomSignUpSection from '@/components/CustomSignUpSection';
 import { useForm, Controller } from 'react-hook-form';
-import CheckBox from 'react-native-check-box';
 import CustomButton from '@/components/CustomButton';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '@/lib/validation/ValidationSchema';
 import { auth } from '@/lib/Firebase/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '@/store/AuthContext';
 
 type loginCredentials = {
     email: string,
@@ -18,9 +18,11 @@ type loginCredentials = {
 }
 
 const Login = () => {
+
+    const { login } = useAuth();
+
     const router = useRouter();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
 
     const { control, handleSubmit, formState: { errors }, } = useForm({
         resolver: yupResolver(loginSchema),
@@ -33,18 +35,17 @@ const Login = () => {
     const onSubmit = async ({ email, password }: loginCredentials) => {
         setIsLoggingIn(true);
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            if (user) {
-                router.push('/home');
+            if (email && password) {
+                await login(email, password);
+                router.push('/app');
             }
+            // const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            // const user = userCredential.user;
         } catch (error) {
-            setErrorMessage("Invalid email or password.");
             console.error('Login error:', error);
         } finally {
             setIsLoggingIn(false);
         }
-        { errorMessage && <Text style={styles.errorText}>{errorMessage}</Text> }
     }
 
     return (

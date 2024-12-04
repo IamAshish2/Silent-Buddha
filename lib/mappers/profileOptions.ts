@@ -10,31 +10,32 @@ export const Options:Option[] = [
       id: 1,
       title: 'My Favourite Meditations',
       icon: 'heart',
-      route: '/my-favourite-meditations'
+      route: 'profile/my-favourite-meditations'
     },
     {
       id: 2,
       title: 'Preferences',
       icon: 'gear',
-      route: '/preferences'
+      route: 'profile/preferences'
     },
     {
       id: 3,
       title: 'Help',
       icon: 'question',
-      route: '/help'
+      route: 'profile/help'
     },
     {
       id: 4,
       title: 'Change Password',
       icon: 'lock',
-      route: '/change-password'
+      route: 'profile/change-password'
     },
-    {
-      id: 5,
-      title: 'Logout',
-      icon: 'external-link',
-      route: 'logout'
-    }
   ];
+
+  // {
+  //   id: 5,
+  //   title: 'Logout',
+  //   icon: 'external-link',
+  //   route: '/profile/logout'
+  // }
   

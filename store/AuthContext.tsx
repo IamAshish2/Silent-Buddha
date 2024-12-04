@@ -1,56 +1,85 @@
-
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth } from "@/lib/Firebase/firebaseConfig";
 import { router } from "expo-router";
-import { User } from "firebase/auth";
-import { createContext, ReactNode, useEffect, useState } from "react";
 
-// type User = {
-//   email: string;
-//   password: string;
-// }
-
-interface UserContextInterface {
-  user: User,
-  setIsLoggedIn: (isLoggedIn: boolean) => void,
-  setUser: React.Dispatch<React.SetStateAction<User | undefined>>
-  // setUser: Dispatch<React.SetStateAction<User>>
+const initialState = {
+  isAuthenticated: undefined,
+  login: async () => { },
+  register: async () => { },
+  logout: async () => { }
 }
 
-// const defaultState = {
-//   user: {
-//     email: '',
-//     password: ''
-//   },
-// setIsLoggedIn: () => {},
-
-//   // setUser: (user: User) => { }
-// } as UserContextInterface;
-
-export const AuthContext = createContext<Partial<UserContextInterface>>({});
-
-// export const AuthContext = createContext<UserContextInterface>(defaultState);
-
-type UserProviderProps = {
-  children: ReactNode
+type AuthContextType = {
+  isAuthenticated: boolean | undefined;
+  login: (email: string, password: string) => Promise<void>
+  register: (email: string, password: string) => Promise<void>
+  logout: () => Promise<void>
 }
-export default function UserProvider({ children }: UserProviderProps) {
-  // const [user, setUser] = useState<User>({
-  //   email: '',
-  //   password: ''
-  // });
-  const [user, setUser] = useState<User>();
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+const AuthContext = createContext<AuthContextType>(initialState);
+
+interface Props extends PropsWithChildren { }
+
+const AuthProvider: React.FC<Props> = ({ children }) => {
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | undefined>();
 
   useEffect(() => {
-    console.log(user);
+    onAuthStateChanged(auth, async user => {
+      if (user) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    });
+  }, []);
 
-    if (!user) {
-      router.push('/login');
+  const login = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error(error);
     }
+  }
 
-  }, [user]);
+  const register = async (email: string, password: string) => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ setIsLoggedIn, setUser, user }}>
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      login,
+      register,
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   )
+
+}
+
+export default AuthProvider;
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error('useAuth must be accessible within the AuthProvider');
+  }
+
+  return context;
 }

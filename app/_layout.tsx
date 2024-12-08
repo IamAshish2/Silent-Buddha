@@ -1,37 +1,58 @@
-import React, { useEffect } from 'react'
-import { router, Slot, Stack } from 'expo-router'
-import AuthProvider, { useAuth } from '@/store/AuthContext';
-
-
-export default function _layout() {
-
-    return (
-        <AuthProvider>
-            <RootLayout />
-        </AuthProvider>
-    )
-}
+import React, { useEffect, useState } from 'react'
+import { Stack, useRouter, useSegments } from 'expo-router'
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
 const RootLayout = () => {
+    const [initializing, setInitializing] = useState(true);
+    const [user, setUser] = useState<FirebaseAuthTypes.User | null>();
+    const router = useRouter();
+    const segment = useSegments();
 
-    const { isAuthenticated } = useAuth();
+    const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
+        setUser(user);
+        if (initializing) setInitializing(false);
+    }
 
     useEffect(() => {
-        if (isAuthenticated === undefined) return;
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber;
+    }, []);
 
-        if (isAuthenticated) {
+    useEffect(() => {
+        if (initializing) return;
+
+        const inAuthGroup = segment[0] === 'app';
+        if (user && !inAuthGroup) {
             router.replace('/app');
-        } else {
-            router.replace('/Landing');
+        } else if (!user && inAuthGroup) {
+            router.replace('/');
         }
-    }, [isAuthenticated]);
+    }, [auth, user, initializing]);
+
+    if (initializing) {
+        <View style={styles.container}>
+            <ActivityIndicator size={'large'} />
+        </View>
+    }
 
     return (
         <Stack>
             <Stack.Screen name="app" options={{ headerShown: false }} />
+            <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="signUp" options={{ headerShown: false }} />
             <Stack.Screen name="login" options={{ headerShown: false }} />
-            <Stack.Screen name="Landing" options={{ headerShown: false }} />
         </Stack>
     )
 }
+
+export default RootLayout;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+})

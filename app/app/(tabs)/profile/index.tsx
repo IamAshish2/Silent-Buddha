@@ -7,16 +7,15 @@ import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { profile } from '@/constants/otherImages';
 import { Options } from '@/lib/mappers/profileOptions';
-import { useAuth } from '@/store/AuthContext';
+import auth from '@react-native-firebase/auth';
 
 const Profile = () => {
   const router = useRouter();
-  const { logout } = useAuth();
 
   async function handleLogout() {
     try {
-      await logout();
-      router.push('/login');
+      await auth().signOut();
+      router.replace('/');
     } catch (error) {
       console.log(error);
     }

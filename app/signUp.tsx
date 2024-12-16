@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Button, Pressable, TextInput, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, StyleSheet, Pressable, TextInput, ScrollView } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CustomButton from '@/components/CustomButton';
@@ -9,11 +9,9 @@ import { Controller, useForm } from 'react-hook-form';
 import CheckBox from 'react-native-check-box';
 import { signUpSchema } from '@/lib/validation/ValidationSchema';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { auth, db } from '@/lib/Firebase/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from '@firebase/firestore';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useAuth } from '@/store/AuthContext';
+import { db } from '@/lib/Firebase/firebaseConfig';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 type signUpCredentials = {
   username: string,
@@ -22,7 +20,14 @@ type signUpCredentials = {
 }
 
 const signUp = () => {
-  const { register } = useAuth();
+  const auth = getAuth();
+  const register = async (email: string, password: string) => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const router = useRouter();
   const [isSigningUp, setIsSigningUp] = useState(false);
 
@@ -42,14 +47,14 @@ const signUp = () => {
     try {
       await register(email, password);
       const user = auth.currentUser;
-
       if (user) {
         await setDoc(doc(db, 'users', user.uid), {
           email: user.email,
           username: username,
         });
+        await auth.signOut();
+        router.replace('/login');
       }
-      router.push('/login');
     } catch (error) {
       console.log(error);
     } finally {
@@ -63,7 +68,7 @@ const signUp = () => {
     <SafeAreaView>
       <ScrollView className='flex p-4 m-2'>
         {/* back button */}
-        <Pressable onPress={() => { router.back() }}>
+        <Pressable onPress={() => { router.replace('/LandingPage') }}>
           <View className='justify-center items-center h-14 w-14 border rounded-full border-zinc-400'>
             <AntDesign name="arrowleft" size={24} color="black" />
           </View>
@@ -72,7 +77,7 @@ const signUp = () => {
         {/* continue with facebook/google section */}
         <View className=''>
           <CustomSignUpSection headingText={'Create your account'} BottomText={''} />
-          <Pressable className='mt-16' onPress={() => { }}>
+          <Pressable className='mt-16' onPress={() => { router.replace('/login') }}>
             <Text className='text-center font-bold text-zinc-500'>OR LOGIN WITH EMAIL</Text>
           </Pressable>
         </View>

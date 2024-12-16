@@ -1,16 +1,14 @@
-import { View, Text, Pressable, TextInput, Button, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, Pressable, TextInput, StyleSheet, ScrollView } from 'react-native'
 import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomSignUpSection from '@/components/CustomSignUpSection';
 import { useForm, Controller } from 'react-hook-form';
 import CustomButton from '@/components/CustomButton';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { loginSchema } from '@/lib/validation/ValidationSchema';
-import { auth } from '@/lib/Firebase/firebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useAuth } from '@/store/AuthContext';
+import auth from '@react-native-firebase/auth';
 
 type loginCredentials = {
     email: string,
@@ -18,8 +16,13 @@ type loginCredentials = {
 }
 
 const Login = () => {
-
-    const { login } = useAuth();
+    const login = async (email: string, password: string) => {
+        try {
+            return await auth().signInWithEmailAndPassword(email, password);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const router = useRouter();
     const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -37,10 +40,8 @@ const Login = () => {
         try {
             if (email && password) {
                 await login(email, password);
-                router.push('/app');
+                // router.replace('/app');
             }
-            // const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            // const user = userCredential.user;
         } catch (error) {
             console.error('Login error:', error);
         } finally {
@@ -52,7 +53,7 @@ const Login = () => {
         <SafeAreaView >
             <ScrollView className='flex p-4 m-2'>
                 {/* back button */}
-                <Pressable onPress={() => { router.back() }}>
+                <Pressable onPress={() => { router.replace('/LandingPage') }}>
                     <View className='justify-center items-center h-14 w-14 border rounded-full border-zinc-400'>
                         <AntDesign name="arrowleft" size={24} color="black" />
                     </View>
@@ -61,7 +62,7 @@ const Login = () => {
                 {/* section */}
                 <View className=''>
                     <CustomSignUpSection headingText={'Welcome Back!'} BottomText={'OR SIGN UP WITH EMAIL'} />
-                    <Pressable className='mt-20'>
+                    <Pressable onPress={() => router.replace('/signUp')} className='mt-20'>
                         <Text className='text-center font-bold text-zinc-500'>OR SIGNUP WITH EMAIL</Text>
                     </Pressable>
                 </View>

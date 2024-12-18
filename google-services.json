@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "177859685656-pp5aeak8e6u349cf64hce22ahg98l86h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thewizardish.meditation",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "177859685656-m4e97u6blcc84rg05jtk6i02hml9khdq.apps.googleusercontent.com",
           "client_type": 3
         }
